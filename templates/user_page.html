@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your License Plate Tracker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+    <!-- Flash Message Section (Display flash messages here) -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
+        <h3>Track the plates you've seen:</h3>
+
+        <!-- Button to go to the Leaderboard -->
+        <a href="{{ url_for('leaderboard') }}" class="btn btn-info mb-3">Go to Leaderboard</a>
+
+        <!-- Link to Feedback Page -->
+        <a href="{{ url_for('feedback') }}" class="btn btn-secondary mb-3">Leave Feedback</a>
+
+        <!-- Admin Buttons (only visible to admins) -->
+        {% if current_user.is_admin %}
+            <h3>Admin Panel</h3>
+            <a href="{{ url_for('admin') }}" class="btn btn-warning mb-3">Go to Admin Panel</a>
+            <a href="{{ url_for('manage_states') }}" class="btn btn-warning mb-3">Manage States/Provinces</a>
+        {% endif %}
+
+        <!-- Filter to show only unseen plates -->
+        <form method="GET" class="mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="filter_unseen" id="filter_unseen"
+                    {% if request.args.get('filter_unseen') %}checked{% endif %}>
+                <label class="form-check-label" for="filter_unseen">Show Unseen Plates</label>
+            </div>
+            <button type="submit" class="btn btn-secondary mt-2">Apply Filter</button>
+        </form>
+
+        <form method="POST">
+            <h4>US States</h4>
+            {% for state in us_states %}
+                {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="us_states" value="{{ state.id }}"
+                            {% if state.id in user_states %}checked{% endif %}>
+                        <label class="form-check-label">{{ state.name }}</label>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <h4>Canadian Provinces</h4>
+            {% for province in canadian_provinces %}
+                {% if not request.args.get('filter_unseen') or (province.id not in user_states) %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="canadian_provinces" value="{{ province.id }}"
+                            {% if province.id in user_states %}checked{% endif %}>
+                        <label class="form-check-label">{{ province.name }}</label>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <h4>Mexican States</h4>
+            {% for state in mexican_states %}
+                {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="mexican_states" value="{{ state.id }}"
+                            {% if state.id in user_states %}checked{% endif %}>
+                        <label class="form-check-label">{{ state.name }}</label>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </form>
+
+        <br>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger mt-3">Logout</a>
+    </div>
+</body>
+</html>
+

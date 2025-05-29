@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - License Plate Game</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Flash Message Section (Display flash messages here) -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="container">
+        <h1 class="mt-4">Leaderboard</h1>
+        <a href="{{ url_for('user_page') }}" class="btn btn-primary mb-3">Go to Your Page</a>
+        
+        <h3>US States</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Plates Seen (US States)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, plate_count in us_leaderboard %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ plate_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Canadian Provinces</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Plates Seen (Canadian Provinces)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, plate_count in canada_leaderboard %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ plate_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Mexican States</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Plates Seen (Mexican States)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, plate_count in mexico_leaderboard %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ plate_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS (optional for better interactivity) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
