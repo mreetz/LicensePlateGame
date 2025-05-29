@@ -6,20 +6,24 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from flask import current_app
 from itsdangerous import URLSafeTimedSerializer as Serializer
+from dotenv import load_dotenv
 import random
 import string
+import os
 
 app = Flask(__name__)
+
+load_dotenv(dotenv_path.os.path.join(os.path.dirname)(__file__), 'LicensePlateGame.env'))  # Load environment variables from .env file
 
 # Make sure to configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Your SMTP server
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'mreetz@gmail.com'
-app.config['MAIL_PASSWORD'] = 'gumz cegl akqx erfp'
-app.config['MAIL_DEFAULT_SENDER'] = 'mreetz@gmail.com'
-app.config['SECRET_KEY'] = '%h59CwRFu!4fS!@2'
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")    
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")  # Use a secure secret key from environment variables
 
 mail = Mail(app)
 
