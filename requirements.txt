@@ -8,3 +8,5 @@ Werkzeug
 python-dotenv==1.1.0
 gunicorn
 PyMySQL
+pytest
+pytest-flask
