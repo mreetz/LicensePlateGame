@@ -95,14 +95,8 @@ class UserTracking(db.Model):
 User.tracked_states = db.relationship('UserTracking', back_populates='user')
 StateProvince.users = db.relationship('UserTracking', back_populates='state_province')
 
-# Function to create the database tables within the app context
-def create_db():
-    with app.app_context():
-        db.create_all()
-
-# Initialize the database and create tables
-create_db()
-
+# Database migrations are managed with Flask-Migrate.
+# Do not auto-create tables during application startup.
 
 # initialize the migration manager
 migrate = Migrate(app, db)
