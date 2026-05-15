@@ -24,11 +24,11 @@ jobs:
 
       - name: Run tests
         env:
-          PYTHONPATH: .
-          SECRET_KEY: test-secret-key
-          DATABASE_URL: sqlite:///:memory:
-          MAIL_USERNAME: test@example.com
-          MAIL_PASSWORD: test-password
-          MAIL_DEFAULT_SENDER: test@example.com
+          PYTHONPATH: "."
+          SECRET_KEY: "test-secret-key"
+          DATABASE_URL: "sqlite:///:memory:"
+          MAIL_USERNAME: "test@example.com"
+          MAIL_PASSWORD: "test-password"
+          MAIL_DEFAULT_SENDER: "test@example.com"
         run: |
           pytest -v
