@@ -1,10 +1,9 @@
 from extensions import db, mail, login_manager, migrate
 from flask import Flask, render_template, redirect, url_for, request, flash
-from flask_login import UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import current_app
-from itsdangerous import URLSafeTimedSerializer as Serializer
 from dotenv import load_dotenv
+from models import User, StateProvince, UserTracking
 import random
 import string
 import os
@@ -44,56 +43,6 @@ login_manager.init_app(app)
 db.init_app(app)
 migrate.init_app(app, db)
 
-
-# Define the User model for user authentication
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    is_approved = db.Column(db.Boolean, default=False)
-    is_admin = db.Column(db.Boolean, default=False)
-    reset_token = db.Column(db.String(100), nullable=True)  # Added for password reset token
-
-    def get_reset_token(self, expires_sec=1800):
-        """
-        Generates a password reset token that expires after a given time period (default 30 minutes).
-        """
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
-
-    @staticmethod
-    def verify_reset_token(token):
-        """
-        Verifies the password reset token and returns the associated user.
-        If the token is invalid or expired, returns None.
-        """
-        s = Serializer(current_app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except Exception as e:
-            return None  # Token is invalid or expired
-        user = User.query.get(data['user_id'])
-        return user
-
-
-# Define the StateProvince model for tracking US states, Canadian provinces, and Mexican states
-class StateProvince(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    country = db.Column(db.String(100), nullable=False)  # 'US', 'Canada', 'Mexico'
-    name = db.Column(db.String(100), nullable=False)  # State or province name
-    category = db.Column(db.String(50), nullable=False)  # 'US', 'Canada', or 'Mexico'
-
-# Define the UserTracking model to track the states/provinces a user has seen
-class UserTracking(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    state_province_id = db.Column(db.Integer, db.ForeignKey('state_province.id'))
-    user = db.relationship('User', back_populates='tracked_states')
-    state_province = db.relationship('StateProvince', back_populates='users')
-
-User.tracked_states = db.relationship('UserTracking', back_populates='user')
-StateProvince.users = db.relationship('UserTracking', back_populates='state_province')
 
 # Database migrations are managed with Flask-Migrate.
 # Do not auto-create tables during application startup.
