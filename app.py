@@ -1,9 +1,7 @@
+from extensions import db, mail, login_manager, migrate
 from flask import Flask, render_template, redirect, url_for, request, flash
-from flask_mail import Mail, Message
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_migrate import Migrate
 from flask import current_app
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from dotenv import load_dotenv
@@ -25,7 +23,6 @@ app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")    
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")  # Use a secure secret key from environment variables
 
-mail = Mail(app)
 
 # Configure the database URI and session secret from environment variables
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
@@ -37,13 +34,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if not app.config["SECRET_KEY"]:
     raise RuntimeError("SECRET_KEY is not set. Define it in LicensePlateGame.env.")
 
-db = SQLAlchemy(app)
 
-# Initialize Flask-Login
-login_manager = LoginManager()
-login_manager.login_view = 'login'    # This will redirect to login if the user isn't autheticated
-login_manager.login_message = "You must be logged in to access this page."  # Custom login message
+mail.init_app(app)
+
+login_manager.login_view = 'login'
+login_manager.login_message = "You must be logged in to access this page."
 login_manager.init_app(app)
+
+db.init_app(app)
+migrate.init_app(app, db)
+
 
 # Define the User model for user authentication
 class User(UserMixin, db.Model):
@@ -97,10 +97,6 @@ StateProvince.users = db.relationship('UserTracking', back_populates='state_prov
 
 # Database migrations are managed with Flask-Migrate.
 # Do not auto-create tables during application startup.
-
-# initialize the migration manager
-migrate = Migrate(app, db)
-
 
 
 # User loader for Flask-Login
