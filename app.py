@@ -13,7 +13,7 @@ import os
 
 app = Flask(__name__)
 
-load_dotenv(dotenv_path.os.path.join(os.path.dirname)(__file__), 'LicensePlateGame.env'))  # Load environment variables from .env file
+load_dotenv(os.path.join(os.path.dirname(__file__), "LicensePlateGame.env"))
 
 # Make sure to configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Your SMTP server
@@ -27,9 +27,16 @@ app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")  # Use a secure secret key fr
 
 mail = Mail(app)
 
-# Configure the database URI and the secret key for sessions
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///license_plate_game.db'
-app.secret_key = 'your_secret_key_here'  # Change this to a secure secret key
+# Configure the database URI and session secret from environment variables
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///license_plate_game.db"
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError("SECRET_KEY is not set. Define it in LicensePlateGame.env.")
+
 db = SQLAlchemy(app)
 
 # Initialize Flask-Login
