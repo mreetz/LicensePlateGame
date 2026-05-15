@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.env
+LicensePlateGame.env
+instance/
+*.db
+.idea/
+.vscode/
