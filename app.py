@@ -493,18 +493,28 @@ def populate_data():
         "Quintana Roo", "San Luis Potosi", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", 
         "Veracruz", "Yucatan", "Zacatecas"
     ]
+    
+    def add_if_missing(country, name, category):
+        existing = StateProvince.query.filter_by(
+            country=country,
+            name=name,
+            category=category
+        ).first()
+
+        if not existing:
+            db.session.add(StateProvince(country=country, name=name, category=category))
 
     # Insert US States
     for state in us_states:
-        db.session.add(StateProvince(country="US", name=state, category="US"))
+        add_if_missing("US", state, "US")
 
     # Insert Canadian Provinces
     for province in canadian_provinces:
-        db.session.add(StateProvince(country="Canada", name=province, category="Canada"))
+        add_if_missing("Canada", province, "Canada")
 
     # Insert Mexican States
     for state in mexican_states:
-        db.session.add(StateProvince(country="Mexico", name=state, category="Mexico"))
+        add_if_missing("Mexico", state, "Mexico")
 
     db.session.commit()
 
