@@ -1,6 +1,3 @@
-## requirements.txt
-
-```text
 Flask
 Flask-Mail
 Flask-SQLAlchemy
@@ -9,3 +6,5 @@ Flask-Login
 itsdangerous
 Werkzeug
 python-dotenv==1.1.0
+gunicorn
+PyMySQL
