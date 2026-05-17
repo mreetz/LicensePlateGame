@@ -100,6 +100,62 @@
             {% endif %}
         {% endwith %}
 
+        <div class="section-card mb-3">
+            <h2 class="h4 mb-3">Your Progress</h2>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>Overall</strong>
+                    <span>{{ total_seen_count }} / {{ total_plate_count }}</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-primary"
+                        role="progressbar"
+                        style="width: {{ (total_seen_count / total_plate_count * 100) if total_plate_count else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>US States</strong>
+                    <span>{{ us_seen_count }} / {{ us_total_count }}</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-success"
+                        role="progressbar"
+                        style="width: {{ (us_seen_count / us_total_count * 100) if us_total_count else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>Canada</strong>
+                    <span>{{ canada_seen_count }} / {{ canada_total_count }}</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-info"
+                        role="progressbar"
+                        style="width: {{ (canada_seen_count / canada_total_count * 100) if canada_total_count else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="d-flex justify-content-between">
+                    <strong>Mexico</strong>
+                    <span>{{ mexico_seen_count }} / {{ mexico_total_count }}</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-warning"
+                        role="progressbar"
+                        style="width: {{ (mexico_seen_count / mexico_total_count * 100) if mexico_total_count else 0 }}%">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="quick-actions mb-3">
             <a href="{{ url_for('leaderboard') }}" class="btn btn-info btn-block">Leaderboard</a>
             <a href="{{ url_for('feedback') }}" class="btn btn-secondary btn-block">Leave Feedback</a>

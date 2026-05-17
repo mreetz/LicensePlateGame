@@ -189,21 +189,39 @@ def user_page():
         # Add newly selected states
         for state_id in selected_states:
             if state_id not in current_user_states_ids:
-                state = StateProvince.query.get(state_id)
+                state = db.session.get(StateProvince, state_id)
                 user_tracking = UserTracking(user_id=current_user.id, state_province=state)
                 db.session.add(user_tracking)
 
         db.session.commit()
         flash('Your updates have been saved to the database')
 
-        # Re-fetch the user's updated tracked states after saving
-        user_states = [state.state_province_id for state in current_user.tracked_states]
+    # Re-fetch the user's updated tracked states after saving
+    user_states = [state.state_province_id for state in current_user.tracked_states]
+    us_seen_count = len([state for state in us_states if state.id in user_states])
+    canada_seen_count = len([province for province in canadian_provinces if province.id in user_states])
+    mexico_seen_count = len([state for state in mexican_states if state.id in user_states])
+
+    us_total_count = len(us_states)
+    canada_total_count = len(canadian_provinces)
+    mexico_total_count = len(mexican_states)
+
+    total_seen_count = us_seen_count + canada_seen_count + mexico_seen_count
+    total_plate_count = us_total_count + canada_total_count + mexico_total_count
 
     return render_template('user_page.html', 
                            us_states=us_states, 
                            canadian_provinces=canadian_provinces, 
                            mexican_states=mexican_states,
-                           user_states=user_states)
+                           user_states=user_states,
+                           us_seen_count=us_seen_count,
+                           canada_seen_count=canada_seen_count,
+                           mexico_seen_count=mexico_seen_count,
+                           us_total_count=us_total_count,
+                           canada_total_count=canada_total_count,
+                           mexico_total_count=mexico_total_count,
+                           total_seen_count=total_seen_count,
+                           total_plate_count=total_plate_count)
 
 
 # Route for logout
@@ -356,12 +374,12 @@ def manage_states():
         state_id = request.form['state_id']
 
         if action == 'delete':
-            state = StateProvince.query.get(state_id)
+            state = db.session.get(StateProvince, state_id)
             db.session.delete(state)
             db.session.commit()
         elif action == 'update':
             state_name = request.form['state_name']
-            state = StateProvince.query.get(state_id)
+            state = db.session.get(StateProvince, state_id)
             state.name = state_name
             db.session.commit()
 
