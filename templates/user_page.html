@@ -180,47 +180,101 @@
 
         <form method="POST">
             <section class="section-card">
-                <h2 class="h4">US States</h2>
-                <div class="plate-grid">
-                    {% for state in us_states %}
-                        {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
-                            <div class="plate-option">
-                                <input id="us_state_{{ state.id }}" type="checkbox" name="us_states" value="{{ state.id }}"
-                                    {% if state.id in user_states %}checked{% endif %}>
-                                <label for="us_state_{{ state.id }}">{{ state.name }}</label>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                <button class="btn btn-link btn-block text-left p-0"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#usStatesCollapse"
+                        aria-expanded="true"
+                        aria-controls="usStatesCollapse">
+                    <h2 class="h4 mb-0">
+                        US States
+                        <small class="text-muted">
+                            ({{ us_seen_count }}/{{ us_total_count }})
+                        </small>
+                    </h2>
+                </button>
+
+                <div class="collapse show mt-3" id="usStatesCollapse">
+                    <div class="plate-grid">
+                        {% for state in us_states %}
+                            {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
+                                <div class="plate-option">
+                                    <input id="us_state_{{ state.id }}"
+                                        type="checkbox"
+                                        name="us_states"
+                                        value="{{ state.id }}"
+                                        {% if state.id in user_states %}checked{% endif %}>
+                                    <label for="us_state_{{ state.id }}">{{ state.name }}</label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </section>
 
             <section class="section-card">
-                <h2 class="h4">Canadian Provinces</h2>
-                <div class="plate-grid">
-                    {% for province in canadian_provinces %}
-                        {% if not request.args.get('filter_unseen') or (province.id not in user_states) %}
-                            <div class="plate-option">
-                                <input id="canada_{{ province.id }}" type="checkbox" name="canadian_provinces" value="{{ province.id }}"
-                                    {% if province.id in user_states %}checked{% endif %}>
-                                <label for="canada_{{ province.id }}">{{ province.name }}</label>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                <button class="btn btn-link btn-block text-left p-0"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#canadaCollapse"
+                        aria-expanded="false"
+                        aria-controls="canadaCollapse">
+                    <h2 class="h4 mb-0">
+                        Canadian Provinces
+                        <small class="text-muted">
+                            ({{ canada_seen_count }}/{{ canada_total_count }})
+                        </small>
+                    </h2>
+                </button>
+
+                <div class="collapse mt-3" id="canadaCollapse">
+                    <div class="plate-grid">
+                        {% for province in canadian_provinces %}
+                            {% if not request.args.get('filter_unseen') or (province.id not in user_states) %}
+                                <div class="plate-option">
+                                    <input id="canada_{{ province.id }}"
+                                        type="checkbox"
+                                        name="canadian_provinces"
+                                        value="{{ province.id }}"
+                                        {% if province.id in user_states %}checked{% endif %}>
+                                    <label for="canada_{{ province.id }}">{{ province.name }}</label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </section>
 
             <section class="section-card">
-                <h2 class="h4">Mexican States</h2>
-                <div class="plate-grid">
-                    {% for state in mexican_states %}
-                        {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
-                            <div class="plate-option">
-                                <input id="mexico_{{ state.id }}" type="checkbox" name="mexican_states" value="{{ state.id }}"
-                                    {% if state.id in user_states %}checked{% endif %}>
-                                <label for="mexico_{{ state.id }}">{{ state.name }}</label>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                <button class="btn btn-link btn-block text-left p-0"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#mexicoCollapse"
+                        aria-expanded="false"
+                        aria-controls="mexicoCollapse">
+                    <h2 class="h4 mb-0">
+                        Mexican States
+                        <small class="text-muted">
+                            ({{ mexico_seen_count }}/{{ mexico_total_count }})
+                        </small>
+                    </h2>
+                </button>
+
+                <div class="collapse mt-3" id="mexicoCollapse">
+                    <div class="plate-grid">
+                        {% for state in mexican_states %}
+                            {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
+                                <div class="plate-option">
+                                    <input id="mexico_{{ state.id }}"
+                                        type="checkbox"
+                                        name="mexican_states"
+                                        value="{{ state.id }}"
+                                        {% if state.id in user_states %}checked{% endif %}>
+                                    <label for="mexico_{{ state.id }}">{{ state.name }}</label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </section>
 
@@ -232,5 +286,7 @@
             </div>
         </form>
     </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
