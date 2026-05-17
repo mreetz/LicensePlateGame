@@ -1,210 +1,314 @@
 # LicensePlateGame
 
-Track license plates you've seen from the U.S., Canada, and Mexico with this Flask-based web application. Designed to run on a Raspberry Pi and accessible securely from anywhere via Cloudflare Tunnel.
+A Raspberry Pi hosted web application for tracking license plates seen across the United States, Canada, and Mexico.
+
+The application provides secure user authentication, administrative approval workflows, leaderboard tracking, password reset functionality, and a mobile-friendly interface optimized for travel and road-trip usage.
 
 ---
 
-## 🔧 Features
+## Features
 
-* User authentication (signup, login, password reset)
-* Leaderboard for U.S. states
-* Admin panel for user approval and state management
-* User dashboard for marking seen plates
-* Feedback system
+### User Features
+- User registration and login
+- Password reset via email
+- Track seen license plates
+- Separate tracking for:
+  - United States
+  - Canadian Provinces
+  - Mexican States
+- Responsive mobile-friendly interface
+- Filter to display unseen plates only
+- User leaderboard rankings
+- Feedback submission form
 
----
-
-## 🖥️ Local Development Setup (Mac or Raspberry Pi)
-
-### 1. Clone the Repo
-
-```bash
-git clone https://github.com/YOUR_USERNAME/LicensePlateGame.git
-cd LicensePlateGame
-```
-
-### 2. Create and Activate Virtual Environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install Requirements
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Set Up Environment Variables
-
-Create a `.env` file (or `LicensePlateGame.env`) in the root folder:
-
-```env
-MAIL_USERNAME=<Mail User to Send Mail>
-MAIL_PASSWORD=<Mail User password or app key>
-MAIL_DEFAULT_SENDER=<Default Sender - often same as MAIL_USERNAME>
-SECRET_KEY=your-secret-key
-DATABASE_URL=sqlite:///licenseplategame.db
-```
-
-Update `app.py` to load this file:
-
-```python
-from dotenv import load_dotenv
-import os
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "LicensePlateGame.env"))
-```
+### Administrative Features
+- User approval workflow
+- User management interface
+- State/province management
+- Administrative dashboard
 
 ---
 
-## 🐍 Database Setup (SQLite with SQLAlchemy)
+## Technology Stack
 
-1. Ensure `DATABASE_URL` is set to a SQLite file, e.g.:
-
-```env
-DATABASE_URL=sqlite:///licenseplategame.db
-```
-
-2. From the root directory and virtual environment activated, initialize the database using Python:
-
-```python
-from app import db
-
-db.create_all()
-```
-
-3. This will create `licenseplategame.db` in your project directory with the necessary tables as defined in your SQLAlchemy models.
-
-> Tip: You can wrap this in a script called `init_db.py` to make it easier:
-
-```python
-# init_db.py
-from app import db
-
-db.create_all()
-print("Database initialized.")
-```
-
-Run it with:
-
-```bash
-python init_db.py
-```
+| Component | Technology |
+|---|---|
+| Backend | Python / Flask |
+| Database | SQLite or MariaDB |
+| ORM | SQLAlchemy |
+| Authentication | Flask-Login |
+| Email | Flask-Mail |
+| Frontend | Bootstrap 4 |
+| Production Server | Gunicorn |
+| Public Exposure | Cloudflare Tunnel |
+| Hosting Platform | Raspberry Pi |
 
 ---
 
-## 🐧 Raspberry Pi Setup (OS & App)
+## Architecture
 
-1. **Install Raspberry Pi OS Lite**
-   Flash using [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+    Internet
+        ↓
+    Cloudflare Tunnel
+        ↓
+    Gunicorn
+        ↓
+    Flask Application
+        ↓
+    SQLite / MariaDB
 
-2. **Enable SSH and Wi-Fi** (create `ssh` and `wpa_supplicant.conf` in boot partition)
+The application is designed to run securely on a Raspberry Pi without directly exposing inbound ports to the internet.
 
-3. **Install required packages:**
-
-```bash
-sudo apt update
-sudo apt install python3 python3-pip python3-venv git
-```
-
-4. **Deploy the app:**
-
-```bash
-git clone https://github.com/YOUR_USERNAME/LicensePlateGame.git
-cd LicensePlateGame
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-5. **Set up `.env` file** and initialize the database as above.
+Cloudflare Tunnel provides encrypted public access while masking the origin server IP address.
 
 ---
 
-## 🔁 Auto-Start on Reboot
+## Screenshots
 
-Create `licenseplate.service` file:
+Screenshots can be added here later.
 
-```ini
-[Unit]
-Description=License Plate Game Flask App
-After=network.target
-
-[Service]
-User=pi
-WorkingDirectory=/home/pi/LicensePlateGame
-Environment="FLASK_APP=app.py"
-Environment="FLASK_ENV=production"
-EnvironmentFile=/home/pi/LicensePlateGame/LicensePlateGame.env
-ExecStart=/home/pi/LicensePlateGame/venv/bin/gunicorn -b localhost:8000 app:app
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Install and enable:
-
-```bash
-sudo cp licenseplate.service /etc/systemd/system/
-sudo systemctl enable licenseplate
-sudo systemctl start licenseplate
-```
+Suggested screenshots:
+- Login page
+- User dashboard
+- Plate tracking page
+- Leaderboard
+- Admin approval panel
+- Mobile browser view
 
 ---
 
-## 🌐 Cloudflare Tunnel Setup
+## Requirements
 
-1. **Install `cloudflared`:**
+### Hardware
+- Raspberry Pi 4 recommended
+- 4GB RAM or greater recommended
 
-```bash
-sudo apt install cloudflared
-```
-
-2. **Authenticate:**
-
-```bash
-cloudflared tunnel login
-```
-
-3. **Create and configure tunnel:**
-
-```bash
-cloudflared tunnel create licenseplate
-```
-
-4. **Create config file at `/etc/cloudflared/config.yml`:**
-
-```yaml
-tunnel: licenseplate
-credentials-file: /home/pi/.cloudflared/licenseplate.json
-
-ingress:
-  - hostname: licenseplate.mreetz.com
-    service: http://localhost:8000
-  - service: http_status:404
-```
-
-5. **Start and enable the tunnel:**
-
-```bash
-sudo cloudflared service install
-sudo systemctl enable cloudflared
-sudo systemctl start cloudflared
-```
+### Software
+- Raspberry Pi OS Bookworm or newer
+- Python 3.11+
+- Git
+- Cloudflare account
+- Gmail account with App Password enabled
 
 ---
 
-## ✅ Final Checklist
+## Installation
 
-* [ ] Flask app runs with `.env` secrets
-* [ ] SQLite database initialized with SQLAlchemy
-* [ ] App auto-starts on reboot
-* [ ] Publicly accessible at `https://licenseplate.mreetz.com`
+### Clone Repository
+
+    git clone https://github.com/YOUR_GITHUB_USERNAME/LicensePlateGame.git
+    cd LicensePlateGame
+
+### Create Python Virtual Environment
+
+    python3 -m venv venv
+    source venv/bin/activate
+
+### Install Dependencies
+
+    pip install -r requirements.txt
+
+### Configure Environment Variables
+
+Create a .env file:
+
+    SECRET_KEY=your_secret_key
+    MAIL_USERNAME=your_email@gmail.com
+    MAIL_PASSWORD=your_gmail_app_password
+    DATABASE_URL=sqlite:///license_plate_game.db
 
 ---
 
-## 📄 License
+## Database Initialization
 
-MIT License. See `LICENSE` file for details.
+Initialize the database:
+
+    flask db upgrade
+
+If migrations are not being used:
+
+    python init_db.py
+
+---
+
+## Running Locally
+
+    python app.py
+
+Application will be available at:
+
+    http://127.0.0.1:5000
+
+---
+
+## Production Deployment
+
+## Gunicorn
+
+Install Gunicorn:
+
+    pip install gunicorn
+
+Test Gunicorn manually:
+
+    gunicorn --bind 127.0.0.1:5000 app:app
+
+---
+
+## systemd Service
+
+Example service file:
+
+    [Unit]
+    Description=License Plate Game Flask App
+    After=network.target
+
+    [Service]
+    User=mreetz
+    Group=mreetz
+    WorkingDirectory=/home/mreetz/LicensePlateGame
+    Environment="PATH=/home/mreetz/LicensePlateGame/venv/bin"
+    ExecStart=/home/mreetz/LicensePlateGame/venv/bin/gunicorn 
+        --workers 3 
+        --bind 127.0.0.1:5000 
+        app:app
+
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+
+Save as:
+
+    /etc/systemd/system/licenseplate.service
+
+Enable and start:
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable licenseplate
+    sudo systemctl start licenseplate
+
+Check status:
+
+    sudo systemctl status licenseplate
+
+---
+
+## Cloudflare Tunnel
+
+Example ingress configuration:
+
+    tunnel: YOUR_TUNNEL_ID
+    credentials-file: /home/mreetz/.cloudflared/YOUR_TUNNEL_ID.json
+
+    ingress:
+      - hostname: licenseplate.example.com
+        service: http://localhost:5000
+      - service: http_status:404
+
+Run tunnel:
+
+    cloudflared tunnel run licenseplate
+
+---
+
+## Security Notes
+
+- Never commit .env files
+- Use Gmail App Passwords instead of account passwords
+- Use a strong Flask SECRET_KEY
+- Cloudflare Tunnel prevents direct inbound exposure
+- Administrative approval is required before user access
+- HTTPS is provided through Cloudflare
+
+---
+
+## Mobile Support
+
+The application uses Bootstrap responsive layouts and is designed for:
+- iPhone browsers
+- Android browsers
+- Tablet devices
+- Desktop browsers
+
+---
+
+## Troubleshooting
+
+### Cloudflare Tunnel Offline
+
+Check tunnel status:
+
+    sudo systemctl status cloudflared
+
+Restart:
+
+    sudo systemctl restart cloudflared
+
+---
+
+### Gunicorn Not Starting
+
+Check logs:
+
+    journalctl -u licenseplate -f
+
+---
+
+### Flask-Mail Authentication Failures
+
+Verify:
+- Gmail App Password
+- SMTP enabled
+- .env configuration
+
+---
+
+### Port Already In Use
+
+Check port usage:
+
+    sudo lsof -i :5000
+
+---
+
+## Development Workflow
+
+### Create Feature Branch
+
+    git checkout -b feature/my-feature
+
+### Commit Changes
+
+    git add .
+    git commit -m "Describe changes"
+
+### Push Branch
+
+    git push -u origin feature/my-feature
+
+---
+
+## Future Improvements
+
+Planned enhancements may include:
+- Progressive Web App (PWA) support
+- OCR license plate recognition
+- GPS trip tracking
+- REST API support
+- Docker deployment
+- User statistics dashboard
+- Plate photo uploads
+- Dark mode support
+
+---
+
+## License
+
+This project is provided for educational and personal use.
+
+---
+
+## Author
+
+Michael W. Reetz
