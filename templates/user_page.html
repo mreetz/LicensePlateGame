@@ -39,6 +39,26 @@
             gap: 0.5rem;
         }
 
+        .us-map-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .us-map-wrapper svg {
+            width: 100%;
+            height: auto;
+            max-height: 420px;
+        }
+
+        .us-map-wrapper path {
+            fill: #dee2e6;
+            stroke: #ffffff;
+            stroke-width: 1;
+        }
+
+        .us-map-wrapper .captured-state {
+            fill: #28a745;
+        }
         .plate-option {
             display: flex;
             align-items: center;
@@ -116,6 +136,15 @@
                         role="progressbar"
                         style="width: {{ (total_seen_count / total_plate_count * 100) if total_plate_count else 0 }}%">
                     </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="h4 mb-2">US Map</h2>
+                <p class="text-muted mb-3">Captured states are highlighted.</p>
+
+                <div class="us-map-wrapper">
+                    {% include "_us_map.html" %}
                 </div>
             </div>
 
@@ -319,5 +348,18 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const capturedStates = {{ captured_us_state_codes | tojson }};
+
+            capturedStates.forEach(function (stateCode) {
+                const stateElement = document.getElementById(stateCode);
+
+                if (stateElement) {
+                    stateElement.style.fill = "#28a745";
+                }
+            });
+        });
+    </script>
 </body>
 </html>
