@@ -5,81 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard - License Plate Game</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+
+        .page-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .leaderboard-section {
+            background: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 52px;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: #ffffff;
+        }
+
+        .leaderboard-rank {
+            font-weight: 700;
+            margin-right: 0.75rem;
+            min-width: 2rem;
+            color: #6c757d;
+        }
+
+        .leaderboard-user {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .leaderboard-count {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+    </style>
 </head>
 <body>
-    <!-- Flash Message Section (Display flash messages here) -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-info">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    <div class="container">
-        <h1 class="mt-4">Leaderboard</h1>
-        <a href="{{ url_for('user_page') }}" class="btn btn-primary mb-3">Go to Your Page</a>
-        
-        <h3>US States</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Plates Seen (US States)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user, plate_count in us_leaderboard %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ plate_count }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <h3>Canadian Provinces</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Plates Seen (Canadian Provinces)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user, plate_count in canada_leaderboard %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ plate_count }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <h3>Mexican States</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Plates Seen (Mexican States)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user, plate_count in mexico_leaderboard %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ plate_count }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="page-header">
+        <div class="container">
+            <h1 class="h3 mb-1">Leaderboard</h1>
+            <p class="text-muted mb-0">See who’s winning the hunt.</p>
+        </div>
     </div>
 
-    <!-- Bootstrap JS (optional for better interactivity) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <main class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    {% for message in messages %}
+                        <p class="mb-0">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <a href="{{ url_for('user_page') }}" class="btn btn-primary btn-block mb-3">Back to Your Tracker</a>
+
+        <section class="leaderboard-section">
+            <h2 class="h4 mb-3">US States</h2>
+            {% if us_leaderboard %}
+                {% for user, plate_count in us_leaderboard %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank">#{{ loop.index }}</span>
+                        <span class="leaderboard-user">{{ user.username }}</span>
+                        <span class="leaderboard-count">{{ plate_count }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">No US plates tracked yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="leaderboard-section">
+            <h2 class="h4 mb-3">Canadian Provinces</h2>
+            {% if canada_leaderboard %}
+                {% for user, plate_count in canada_leaderboard %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank">#{{ loop.index }}</span>
+                        <span class="leaderboard-user">{{ user.username }}</span>
+                        <span class="leaderboard-count">{{ plate_count }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">No Canadian plates tracked yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="leaderboard-section">
+            <h2 class="h4 mb-3">Mexican States</h2>
+            {% if mexico_leaderboard %}
+                {% for user, plate_count in mexico_leaderboard %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank">#{{ loop.index }}</span>
+                        <span class="leaderboard-user">{{ user.username }}</span>
+                        <span class="leaderboard-count">{{ plate_count }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">No Mexican plates tracked yet.</p>
+            {% endif %}
+        </section>
+    </main>
 </body>
 </html>
-
