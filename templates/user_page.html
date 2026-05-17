@@ -5,86 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your License Plate Tracker</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            padding-bottom: 90px;
+        }
 
+        .page-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions .btn {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .plate-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .plate-option {
+            display: flex;
+            align-items: center;
+            min-height: 48px;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            background: #ffffff;
+        }
+
+        .plate-option input {
+            margin-right: 0.75rem;
+            transform: scale(1.2);
+        }
+
+        .plate-option label {
+            margin-bottom: 0;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .sticky-save {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.96);
+            border-top: 1px solid #dee2e6;
+            z-index: 1000;
+        }
+
+        @media (min-width: 576px) {
+            .plate-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .plate-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Flash Message Section (Display flash messages here) -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-info">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    <div class="container mt-5">
-        <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
-        <h3>Track the plates you've seen:</h3>
+    <div class="page-header">
+        <div class="container">
+            <h1 class="h3 mb-1">Welcome, {{ current_user.username }}!</h1>
+            <p class="text-muted mb-0">Track plates you’ve seen across the US, Canada, and Mexico.</p>
+        </div>
+    </div>
 
-        <!-- Button to go to the Leaderboard -->
-        <a href="{{ url_for('leaderboard') }}" class="btn btn-info mb-3">Go to Leaderboard</a>
+    <main class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    {% for message in messages %}
+                        <p class="mb-0">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
-        <!-- Link to Feedback Page -->
-        <a href="{{ url_for('feedback') }}" class="btn btn-secondary mb-3">Leave Feedback</a>
+        <div class="quick-actions mb-3">
+            <a href="{{ url_for('leaderboard') }}" class="btn btn-info btn-block">Leaderboard</a>
+            <a href="{{ url_for('feedback') }}" class="btn btn-secondary btn-block">Leave Feedback</a>
 
-        <!-- Admin Buttons (only visible to admins) -->
-        {% if current_user.is_admin %}
-            <h3>Admin Panel</h3>
-            <a href="{{ url_for('admin') }}" class="btn btn-warning mb-3">Go to Admin Panel</a>
-            <a href="{{ url_for('manage_states') }}" class="btn btn-warning mb-3">Manage States/Provinces</a>
-        {% endif %}
+            {% if current_user.is_admin %}
+                <div class="section-card mt-2">
+                    <h2 class="h5">Admin</h2>
+                    <a href="{{ url_for('admin') }}" class="btn btn-warning btn-block">Admin Panel</a>
+                    <a href="{{ url_for('manage_states') }}" class="btn btn-outline-warning btn-block">Manage States/Provinces</a>
+                </div>
+            {% endif %}
+        </div>
 
-        <!-- Filter to show only unseen plates -->
-        <form method="GET" class="mb-3">
+        <form method="GET" class="section-card">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="filter_unseen" id="filter_unseen"
                     {% if request.args.get('filter_unseen') %}checked{% endif %}>
-                <label class="form-check-label" for="filter_unseen">Show Unseen Plates</label>
+                <label class="form-check-label" for="filter_unseen">Show only unseen plates</label>
             </div>
-            <button type="submit" class="btn btn-secondary mt-2">Apply Filter</button>
+            <button type="submit" class="btn btn-outline-secondary btn-block mt-3">Apply Filter</button>
         </form>
 
         <form method="POST">
-            <h4>US States</h4>
-            {% for state in us_states %}
-                {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="us_states" value="{{ state.id }}"
-                            {% if state.id in user_states %}checked{% endif %}>
-                        <label class="form-check-label">{{ state.name }}</label>
-                    </div>
-                {% endif %}
-            {% endfor %}
+            <section class="section-card">
+                <h2 class="h4">US States</h2>
+                <div class="plate-grid">
+                    {% for state in us_states %}
+                        {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
+                            <div class="plate-option">
+                                <input id="us_state_{{ state.id }}" type="checkbox" name="us_states" value="{{ state.id }}"
+                                    {% if state.id in user_states %}checked{% endif %}>
+                                <label for="us_state_{{ state.id }}">{{ state.name }}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
 
-            <h4>Canadian Provinces</h4>
-            {% for province in canadian_provinces %}
-                {% if not request.args.get('filter_unseen') or (province.id not in user_states) %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="canadian_provinces" value="{{ province.id }}"
-                            {% if province.id in user_states %}checked{% endif %}>
-                        <label class="form-check-label">{{ province.name }}</label>
-                    </div>
-                {% endif %}
-            {% endfor %}
+            <section class="section-card">
+                <h2 class="h4">Canadian Provinces</h2>
+                <div class="plate-grid">
+                    {% for province in canadian_provinces %}
+                        {% if not request.args.get('filter_unseen') or (province.id not in user_states) %}
+                            <div class="plate-option">
+                                <input id="canada_{{ province.id }}" type="checkbox" name="canadian_provinces" value="{{ province.id }}"
+                                    {% if province.id in user_states %}checked{% endif %}>
+                                <label for="canada_{{ province.id }}">{{ province.name }}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
 
-            <h4>Mexican States</h4>
-            {% for state in mexican_states %}
-                {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="mexican_states" value="{{ state.id }}"
-                            {% if state.id in user_states %}checked{% endif %}>
-                        <label class="form-check-label">{{ state.name }}</label>
-                    </div>
-                {% endif %}
-            {% endfor %}
+            <section class="section-card">
+                <h2 class="h4">Mexican States</h2>
+                <div class="plate-grid">
+                    {% for state in mexican_states %}
+                        {% if not request.args.get('filter_unseen') or (state.id not in user_states) %}
+                            <div class="plate-option">
+                                <input id="mexico_{{ state.id }}" type="checkbox" name="mexican_states" value="{{ state.id }}"
+                                    {% if state.id in user_states %}checked{% endif %}>
+                                <label for="mexico_{{ state.id }}">{{ state.name }}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
 
-            <button type="submit" class="btn btn-primary mt-3">Save</button>
+            <div class="sticky-save">
+                <div class="container">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Save Plates</button>
+                    <a href="{{ url_for('logout') }}" class="btn btn-link btn-block mt-1">Logout</a>
+                </div>
+            </div>
         </form>
-
-        <br>
-        <a href="{{ url_for('logout') }}" class="btn btn-danger mt-3">Logout</a>
-    </div>
+    </main>
 </body>
 </html>
-
