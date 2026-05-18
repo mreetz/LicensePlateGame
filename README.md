@@ -65,15 +65,25 @@ Cloudflare Tunnel provides encrypted public access while masking the origin serv
 
 ## Screenshots
 
-Screenshots can be added here later.
+### Login Page
 
-Suggested screenshots:
-- Login page
-- User dashboard
-- Plate tracking page
-- Leaderboard
-- Admin approval panel
-- Mobile browser view
+![Login page](docs/screenshots/login-page.png)
+
+### User Dashboard
+
+![User dashboard mobile view](docs/screenshots/user-dashboard-mobile.png)
+
+### Leaderboard
+
+![Leaderboard](docs/screenshots/leaderboard.png)
+
+### Admin Panel
+
+![Admin panel](docs/screenshots/admin-panel.png)
+
+### Password Reset
+
+![Password reset](docs/screenshots/password-reset.png)
 
 ---
 
