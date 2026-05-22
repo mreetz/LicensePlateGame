@@ -7,3 +7,21 @@ instance/
 *.db
 .idea/
 .vscode/
+
+# Secrets / environment
+.env
+*.env
+LicensePlateGame.env
+
+# Python
+venv/
+__pycache__/
+
+# Runtime data
+instance/
+
+# Local backups
+backups/
+
+# VS Code local settings
+.vscode/
