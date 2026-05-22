@@ -3,39 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Approve User</title>
+    <title>Approve User - License Plate Game</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
-    <!-- Flash Message Section (Display flash messages here) -->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class="alert alert-info">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
+            <div class="container mt-3">
+                <div class="alert alert-info">
+                    {% for message in messages %}
+                        <p class="mb-0">{{ message }}</p>
+                    {% endfor %}
+                </div>
             </div>
         {% endif %}
     {% endwith %}
+
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Approve User</h1>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <h1 class="mb-3 mb-md-0">Approve User</h1>
+            <div>
+                <a href="{{ url_for('admin') }}" class="btn btn-secondary">Back to Admin</a>
+                <a href="{{ url_for('user_page') }}" class="btn btn-primary">Back to App</a>
+            </div>
+        </div>
 
-        <h3>Are you sure you want to approve the following user?</h3>
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
+        <div class="bg-white p-4 shadow-sm rounded">
+            <h3>Review this user</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
 
-        <!-- Form for Approve/Disapprove -->
-        <form method="POST">
-            <button type="submit" name="action" value="approve" class="btn btn-success btn-block">Approve</button>
-            <button type="submit" name="action" value="disapprove" class="btn btn-danger btn-block">Disapprove</button>
-        </form>
-
-        <a href="{{ url_for('admin') }}" class="btn btn-secondary mt-3">Back to Admin Panel</a>
+            <form method="POST">
+                <button type="submit" name="action" value="approve" class="btn btn-success btn-block">Approve</button>
+                <button type="submit" name="action" value="disapprove" class="btn btn-danger btn-block mt-2">Disapprove</button>
+            </form>
+        </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-

@@ -471,7 +471,48 @@ def approve_user(user_id):
                 user.is_approved = False
 
             db.session.commit()
-            flash(f'User {user.username} has been {action}d.')
+
+            if action == 'approve':
+                login_link = url_for('login', _external=True)
+                msg = Message('You are approved for License Plate Game', recipients=[user.email])
+                msg.body = f'''Hi {user.username},
+
+Your License Plate Game account has been approved.
+
+You can log in here:
+{login_link}
+
+Game rules:
+- Mark a plate when you personally see it during the game.
+- The primary leaderboard tracks U.S. states, including Washington, D.C.
+- Canadian provinces and Mexican states are available for extra tracking.
+- Be honest. This is a road-trip game, not a congressional ethics hearing.
+- Use the "Show Unseen Plates" filter to focus on what you still need.
+
+Install on iPhone or iPad:
+1. Open the game in Safari.
+2. Tap the Share button.
+3. Tap "Add to Home Screen."
+4. Tap "Add."
+
+Install on Android:
+1. Open the game in Chrome.
+2. Tap the three-dot menu.
+3. Tap "Add to Home screen" or "Install app."
+4. Confirm the install.
+
+After that, the game will appear like an app on your phone home screen.
+
+Have fun and happy plate hunting!
+'''
+                try:
+                    mail.send(msg)
+                    flash(f'User {user.username} has been approved and notified by email.')
+                except Exception as e:
+                    flash(f'User {user.username} has been approved, but the approval email failed: {str(e)}')
+            else:
+                flash(f'User {user.username} has been disapproved.')
+
             return redirect(url_for('admin'))  # Redirect to the admin panel after the action
 
         # If it's a GET request, simply display the user info

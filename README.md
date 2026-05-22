@@ -241,6 +241,10 @@ The application uses Bootstrap responsive layouts and is designed for:
 - Tablet devices
 - Desktop browsers
 
+The app can also be added to a phone home screen so it behaves more like a native app.
+
+See: [Install License Plate Game on a Phone](docs/install-on-phone.md)
+
 ---
 
 ## Troubleshooting
